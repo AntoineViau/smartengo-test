@@ -1,0 +1,25 @@
+<mat-sidenav-container class="sidenav-container bg-white bg-primary">
+  <mat-sidenav #drawer class="sidenav border-0 bg-white" fixedInViewport>
+    <mat-nav-list class="pt-0 w-75 mx-auto bg-primary"> </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content class="bg-white">
+    <mat-toolbar color="primary">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        class="text-white"
+        (click)="drawer.toggle()"
+      ></button>
+
+      <span class="spacer"></span>
+      <span class="logout-text" (click)="logout()" role="button"> Logout </span>
+      <button mat-icon-button class="logout-button" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+    <div>
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

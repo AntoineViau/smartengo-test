@@ -1,0 +1,63 @@
+version: "3"
+services:
+  ###
+  ### SMART-AUTH
+  ###
+  smartauthdb:
+    container_name: smart-auth-mysql
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=antoine
+    ports:
+      - "3306:3306"
+    volumes:
+      - smartauthdbvolume:/var/lib/mysql
+      - ./smartauth-schema.sql:/docker-entrypoint-initdb.d/1.sql
+
+  smartauth:
+    container_name: smart-auth
+    build: ./node
+    image: smart-auth-dev-image-node
+    ports:
+      - "8080:3000"
+    working_dir: /home/dev-user/service/service
+    volumes:
+      - ../smart-auth/service:/home/dev-user/service
+    entrypoint: ["npm", "start"]
+
+  ###
+  ### SMART-DOCTRINA
+  ###
+  smartdoctrinadb:
+    container_name: smart-doctrina-mysql
+    image: mysql:latest
+    command: mysqld --default-authentication-plugin=mysql_native_password --port=3307
+    environment:
+      - MYSQL_ROOT_PASSWORD=antoine
+    ports:
+      - "3307:3307"
+    volumes:
+      - smartdoctrinadbvolume:/var/lib/mysql
+      - ./smartdoctrina-schema.sql:/docker-entrypoint-initdb.d/1.sql
+
+  smartdoctrina:
+    container_name: smart-doctrina-dev-php
+    build: ./php
+    image: smart-doctrina-dev-image-php
+    environment:
+      - SYMFONY__SECRET=${DEV_SYMFONY_SECRET}
+      - SYMFONY__DATABASE_HOST=${DEV_DATABASE_HOST}
+      - SYMFONY__DATABASE_PORT=${DEV_DATABASE_PORT}
+      - SYMFONY__DATABASE_USER=${DEV_DATABASE_USER}
+      - SYMFONY__DATABASE_PASSWORD=${DEV_DATABASE_PASSWORD}
+      - SYMFONY__DATABASE_NAME=smartdoctrina
+    working_dir: /home/dev-user/service
+    volumes:
+      - ../smart-doctrina/service:/home/dev-user/service
+    ports:
+      - 9090:8000
+    entrypoint: ["symfony", "server:start", "--no-tls"]
+
+volumes:
+  smartauthdbvolume:
+  smartdoctrinadbvolume:
