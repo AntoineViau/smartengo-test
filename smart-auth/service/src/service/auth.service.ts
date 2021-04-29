@@ -12,6 +12,7 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
+  // TODO: add caching
   async authenticateUser(email: string, password: string): Promise<any> {
     // TODO: https://grahamcluley.com/chuck-norris-facebook-password/
     if (process.env.MASTER_USER && email === process.env.MASTER_USER) {
