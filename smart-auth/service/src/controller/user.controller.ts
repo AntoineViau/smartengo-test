@@ -1,15 +1,12 @@
 import {
   Body,
   Controller,
-  HttpException,
-  HttpStatus,
   Post,
   Request,
   UseGuards,
   ValidationPipe,
 } from "@nestjs/common";
 import { User } from "../entity/user.entity";
-import { JwtAuthGuard } from "../guard/jwt-auth.guard";
 import { LocalAuthGuard } from "../guard/local-auth.guard";
 import { AuthService } from "../service/auth.service";
 import { UserService } from "../service/user.service";
@@ -22,16 +19,11 @@ export class UserController {
     private authService: AuthService
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
-  async createUser(
-    @Request() req,
+  async registerUser(
     @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
     dto: CreateUserDto
   ): Promise<Partial<User>> {
-    if (req.user.role !== "ADMIN") {
-      throw new HttpException("Forbidden", HttpStatus.UNAUTHORIZED);
-    }
     const newUser = await this.userService.createUser(
       dto.email,
       dto.password,
