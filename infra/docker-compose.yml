@@ -24,6 +24,7 @@ services:
     volumes:
       - ../smart-auth/service:/home/dev-user/service
     entrypoint: ["npm", "start"]
+    depends_on: [smartauthdb]
 
   ###
   ### SMART-DOCTRINA
@@ -57,6 +58,7 @@ services:
     ports:
       - 9090:8000
     entrypoint: ["symfony", "server:start", "--no-tls"]
+    depends_on: [smartdoctrinadb]
 
 volumes:
   smartauthdbvolume:
