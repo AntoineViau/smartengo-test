@@ -45,4 +45,14 @@ class ArticleTest extends ApiControllerTest
         $response = $this->client->getResponse();
         $this->assertEquals(404, $response->getStatusCode());
     }
+
+    /**
+     * @test
+     */
+    public function getArticleUnknown(): void
+    {
+        $this->request('GET', '/article/2501');
+        $response = $this->client->getResponse();
+        $this->assertEquals(404, $response->getStatusCode());
+    }
 }

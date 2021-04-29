@@ -27,7 +27,7 @@ class ArticleService
         return $article;
     }
 
-    public function findById(int $id): Article
+    public function findById(int $id): ?Article
     {
         $articleRepository = $this->em->getRepository(Article::class);
         $article = $articleRepository->find($id);

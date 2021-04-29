@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -46,14 +47,13 @@ class ArticleController extends AbstractController
     /**
      * @Route("/article/{id}", methods={"GET"}, requirements={ "id"="\d+" })
      */
-    public function getArticle(Request $request, int $id): Response
+    public function getArticle(int $id): Response
     {
-        try {
-            $article = $this->articleService->findById($id);
-            $json = $this->serializer->serialize($article, 'json');
-            return new Response($json);
-        } catch (\Exception $e) {
-            return new Response($e->getMessage());
+        $article = $this->articleService->findById($id);
+        if (!$article) {
+            throw new NotFoundHttpException();
         }
+        $json = $this->serializer->serialize($article, 'json');
+        return new Response($json);
     }
 }
