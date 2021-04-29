@@ -6,6 +6,7 @@ use App\Service\ArticleService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -27,22 +28,23 @@ class ArticleController extends AbstractController
     public function createArticle(Request $request): Response
     {
         try {
+            // TODO: validate deserialization
             $dto = $this->serializer->deserialize($request->getContent(), ArticleDto::class, 'json');
+            // TODO: manage errors
             $article = $this->articleService->createArticle(
                 $dto->name,
                 $dto->content
             );
-
             $response = ["id" => $article->getId()];
             $json = $this->serializer->serialize($response, 'json');
             return new Response($json);
         } catch (\Exception $e) {
-            return new Response($e->getMessage());
+            throw new HttpException(500, $e->getMessage());
         }
     }
 
     /**
-     * @Route("/article/{id}", methods={"GET"})
+     * @Route("/article/{id}", methods={"GET"}, requirements={ "id"="\d+" })
      */
     public function getArticle(Request $request, int $id): Response
     {
